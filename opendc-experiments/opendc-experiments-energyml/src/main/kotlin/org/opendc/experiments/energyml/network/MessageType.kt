@@ -1,7 +1,5 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 /*
- * Copyright (c) 2017 AtLarge Research
+ * Copyright (c) 2021 AtLarge Research
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,26 +20,12 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
  * SOFTWARE.
  */
 
-plugins {
-    `dokka-conventions`
-    `jacoco-aggregation`
-    kotlin("jvm")// version "1.7.20"
-}
+package org.opendc.experiments.energyml.network
 
-allprojects {
-    version = "3.0-rc1"
-}
-dependencies {
-    implementation(kotlin("stdlib-jdk8"))
-}
-repositories {
-    mavenCentral()
-}
-val compileKotlin: KotlinCompile by tasks
-compileKotlin.kotlinOptions {
-    jvmTarget = "1.8"
-}
-val compileTestKotlin: KotlinCompile by tasks
-compileTestKotlin.kotlinOptions {
-    jvmTarget = "1.8"
+/**
+ * Enumeration of the types of messages exchanged between worker and master nodes during TensorFlow execution.
+ */
+public enum class MessageType {
+    REQUEST,
+    WEIGHTS
 }

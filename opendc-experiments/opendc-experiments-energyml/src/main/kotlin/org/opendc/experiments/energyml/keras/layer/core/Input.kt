@@ -1,7 +1,5 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 /*
- * Copyright (c) 2017 AtLarge Research
+ * Copyright (c) 2021 AtLarge Research
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -22,26 +20,31 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
  * SOFTWARE.
  */
 
-plugins {
-    `dokka-conventions`
-    `jacoco-aggregation`
-    kotlin("jvm")// version "1.7.20"
-}
+package org.opendc.experiments.energyml.keras.layer.core
 
-allprojects {
-    version = "3.0-rc1"
-}
-dependencies {
-    implementation(kotlin("stdlib-jdk8"))
-}
-repositories {
-    mavenCentral()
-}
-val compileKotlin: KotlinCompile by tasks
-compileKotlin.kotlinOptions {
-    jvmTarget = "1.8"
-}
-val compileTestKotlin: KotlinCompile by tasks
-compileTestKotlin.kotlinOptions {
-    jvmTarget = "1.8"
+import org.opendc.experiments.energyml.keras.layer.Layer
+import org.opendc.experiments.energyml.keras.shape.TensorShape
+
+/**
+ * This layer is responsible for the input shape of the built model.
+ */
+public class Input(vararg dims: Long, name: String) : Layer(name) {
+    /**
+     * Input data dimensions. Rank = 3 or 4 for most popular supported cases.
+     */
+    public val packedDims: LongArray = dims
+
+    override fun build(inputShape: TensorShape) {}
+
+    override fun getOutputShape(inputShape: TensorShape): TensorShape {
+        return inputShape
+    }
+
+    override fun forward(): Double = 0.0
+
+    override fun backward(): Double = 0.0
+
+    override fun toString(): String {
+        return "Input[shape=${packedDims.contentToString()}]"
+    }
 }

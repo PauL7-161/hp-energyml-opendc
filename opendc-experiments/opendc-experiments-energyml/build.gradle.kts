@@ -26,15 +26,29 @@ description = "Integrating Energy Metrics into OpenDC's ML Simulation"
 plugins {
     `kotlin-conventions`
     `testing-conventions`
+    `jacoco-conventions`
+    `benchmark-conventions`
+    distribution
 }
 
 dependencies {
+    api(projects.opendcExperiments.opendcExperimentsCompute)
+
     implementation(projects.opendcSimulator.opendcSimulatorCore)
     implementation(projects.opendcSimulator.opendcSimulatorCompute)
     implementation(projects.opendcCommon)
+    implementation(projects.opendcCompute.opendcComputeSimulator)
 
     implementation(libs.kotlin.logging)
     implementation(libs.jackson.module.kotlin)
+    implementation(libs.jackson.dataformat.csv)
+
+    implementation(libs.clikt)
+    implementation(libs.progressbar)
+
+    runtimeOnly(projects.opendcTrace.opendcTraceOpendc)
+    runtimeOnly(libs.log4j.core)
+    runtimeOnly(libs.log4j.slf4j)
 
     testImplementation(libs.slf4j.simple)
 }
