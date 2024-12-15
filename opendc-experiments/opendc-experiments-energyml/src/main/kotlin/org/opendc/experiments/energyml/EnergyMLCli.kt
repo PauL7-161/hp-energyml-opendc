@@ -106,12 +106,12 @@ internal class EnergyMLCommand : CliktCommand(name = "energyml") {
      */
     private val portfolio by argument(help = "portfolio to replay")
         .choice(
-            "test" to "{ TestPortfolio() }",
-//            "composite-workload" to { CompositeWorkloadPortfolio() },
-//            "hor-ver" to { HorVerPortfolio() },
-//            "more-hpc" to { MoreHpcPortfolio() },
-//            "more-velocity" to { MoreVelocityPortfolio() },
-//            "op-phen" to { OperationalPhenomenaPortfolio() }
+            "test" to { TestPortfolio() },
+            "composite-workload" to { CompositeWorkloadPortfolio() },
+            "hor-ver" to { HorVerPortfolio() },
+            "more-hpc" to { MoreHpcPortfolio() },
+            "more-velocity" to { MoreVelocityPortfolio() },
+            "op-phen" to { OperationalPhenomenaPortfolio() }
         )
 
     /**
@@ -121,15 +121,15 @@ internal class EnergyMLCommand : CliktCommand(name = "energyml") {
 
     override fun run() {
         val runner = EnergyMLRunner(envPath, tracePath, outputPath.takeUnless { disableOutput })
-//        val scenarios = portfolio().scenarios.toList()
+        val scenarios = portfolio().scenarios.toList()
 
         val pool = ForkJoinPool(parallelism)
 
-//        echo("Detected ${scenarios.size} scenarios [$repeats replications]")
+        echo("Detected ${scenarios.size} scenarios [$repeats replications]")
 
-//        for (scenario in scenarios) {
-//            runScenario(runner, pool, scenario)
-//        }
+        for (scenario in scenarios) {
+            runScenario(runner, pool, scenario)
+        }
 
         pool.shutdown()
     }
@@ -137,7 +137,7 @@ internal class EnergyMLCommand : CliktCommand(name = "energyml") {
     /**
      * Run a single scenario.
      */
-    private fun runScenario(runner: EnergyMLRunner, pool: ForkJoinPool, scenario: String) {
+    private fun runScenario(runner: EnergyMLRunner, pool: ForkJoinPool, scenario: Scenario) {
         val pb = ProgressBarBuilder()
             .setInitialMax(repeats.toLong())
             .setStyle(ProgressBarStyle.ASCII)
@@ -148,8 +148,8 @@ internal class EnergyMLCommand : CliktCommand(name = "energyml") {
             LongStream.range(0, repeats.toLong())
                 .parallel()
                 .forEach { repeat ->
-//                    val augmentedScenario = scenario.copy(partitions = basePartitions + scenario.partitions)
-//                    runner.runScenario(augmentedScenario, seed + repeat)
+                    val augmentedScenario = scenario.copy(partitions = basePartitions + scenario.partitions)
+                    runner.runScenario(augmentedScenario, seed + repeat)
                     pb.step()
                 }
 

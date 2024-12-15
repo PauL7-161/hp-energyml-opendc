@@ -59,43 +59,45 @@ public class EnergyMLRunner(
     /**
      * Run a single [scenario] with the specified seed.
      */
-    fun runScenario(scenario: String, seed: Long) = runSimulation {
+
+    //TODO re-write run-simulation function such that output can be read/written
+    fun runScenario(scenario: Scenario, seed: Long) = runSimulation {
         val serviceDomain = "compute.opendc.org"
-//        val topology = clusterTopology(File(envPath, "${scenario.topology.name}.txt"))
+        val topology = clusterTopology(File(envPath, "${scenario.topology.name}.txt"))
 
         Provisioner(coroutineContext, clock, seed).use { provisioner ->
             provisioner.runSteps(
-//                setupComputeService(serviceDomain, { createComputeScheduler(scenario.allocationPolicy, Random(it.seeder.nextLong())) }),
-//                setupHosts(serviceDomain, topology, optimize = true)
+                setupComputeService(serviceDomain, { createComputeScheduler(scenario.allocationPolicy, Random(it.seeder.nextLong())) }),
+                setupHosts(serviceDomain, topology, optimize = true)
             )
 
             if (outputPath != null) {
-//                val partitions = scenario.partitions + ("seed" to seed.toString())
-//                val partition = partitions.map { (k, v) -> "$k=$v" }.joinToString("/")
+                val partitions = scenario.partitions + ("seed" to seed.toString())
+                val partition = partitions.map { (k, v) -> "$k=$v" }.joinToString("/")
 
-//                provisioner.runStep(
-//                    registerComputeMonitor(
-//                        serviceDomain,
-//                        ParquetComputeMonitor(
-//                            outputPath,
-//                            partition,
-//                            bufferSize = 4096
-//                        )
-//                    )
-//                )
+                provisioner.runStep(
+                    registerComputeMonitor(
+                        serviceDomain,
+                        ParquetComputeMonitor(
+                            outputPath,
+                            partition,
+                            bufferSize = 4096
+                        )
+                    )
+                )
             }
 
             val service = provisioner.registry.resolve(serviceDomain, ComputeService::class.java)!!
-//            val vms = scenario.workload.source.resolve(workloadLoader, Random(seed))
-//            val operationalPhenomena = scenario.operationalPhenomena
-//            val failureModel =
-//                if (operationalPhenomena.failureFrequency > 0) {
-//                    grid5000(Duration.ofSeconds((operationalPhenomena.failureFrequency * 60).roundToLong()))
-//                } else {
-//                    null
-//                }
+            val vms = scenario.workload.source.resolve(workloadLoader, Random(seed))
+            val operationalPhenomena = scenario.operationalPhenomena
+            val failureModel =
+                if (operationalPhenomena.failureFrequency > 0) {
+                    grid5000(Duration.ofSeconds((operationalPhenomena.failureFrequency * 60).roundToLong()))
+                } else {
+                    null
+                }
 
-//            service.replay(clock, vms, seed, failureModel = failureModel, interference = operationalPhenomena.hasInterference)
+            service.replay(clock, vms, seed, failureModel = failureModel, interference = operationalPhenomena.hasInterference)
         }
     }
 }
